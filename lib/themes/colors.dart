@@ -1,0 +1,48 @@
+
+import 'dart:ui';
+
+
+const primaryColor = 0xff2f3291;
+const primaryColorDark = 0xff043876;
+const infoColor = 0xff62A6F9;
+const infoColorAccent = 0x3062A6F9;
+const successColor = 0xff019F67;
+const successColorAccent = 0x3328A745;
+const warningColor = 0xffFFC107;
+const warningColorAccent = 0x33FFC107;
+const errorColor = 0xffDB1F35;
+const errorColorAccent = 0x20DC3445;
+const secondaryColorAccent = 0xffE4E4E4;
+const blackColor = 0xff030712;
+const blackColorBlack = 0xff374151;
+const tabBgColor = 0xffC4DEFD;
+const inputBorderColor = 0xFFE5E7EB;
+const textColor = 0xff030712;
+const textColorBlack = 0xff374151;
+const textColorGrey = 0xff6B7280;
+const textColorLightGrey = 0xffE8E8E8;
+const secondaryText = Color(0xFF757575);
+const accent = Color(0xFFFF5722);
+const icons = Color(0xFFFFFFFF);
+const divider = Color(0xFFBDBDBD);
+const accidentRowColor = 0xFF5FADFF;
+const accidentRowDefaultColor = 0xFF4B5563;
+const accidentContainer = 0xFFF9FAFB;
+const accidentTextColor = 0xFFFFFFFF;
+const headerColor = 0xFF019F67;
+const cardColor = 0xFFFFFFFF;
+const Color sickLeaveColor = Color(0xFFF9A8D4);
+const Color personalLeaveColor = Color(0xFFC4B5FD);
+const Color vacationLeaveColor = Color(0xFF38BDF8);
+const Color defaultLeaveColor = Color(0xFFE5E7EB);
+const primaryBlue = 0xFF2F3291;
+const primaryLBlue = 0xFFE5E6FF;
+const neutralGray50 = 0xFFF9FAFB;
+const neutralGray200 = 0xFFE5E7EB;
+const primaryGreen = 0xFF019F67;
+const primaryLGreen = 0xFFF1FAF7;
+const neutralGray600 = 0xFF4B5563;
+const primaryBlueClose =  0xFF0008FF;
+const primaryBlueCloseAccent = 0x300008FF;
+const fontBoldRed = 0xFFFF5722;
+const fontBoldYallow = 0xFFFFC107;
