@@ -73,6 +73,12 @@ class _MainPageScreenState extends State<MainPageScreen> {
       "icon": "lib/assets/icons/ic_svg_receipt.svg",
       "iconpng": "lib/assets/icons/ic_phone_call.png",
     },
+    {
+      "name": "การสื่อสาร",
+      "icon": "lib/assets/icons/ic_svg_receipt.svg",
+      "iconpng": "lib/assets/icons/ic_phone_call.png",
+      "routeName": AppRouter.communication,
+    },
   ];
 
   @override

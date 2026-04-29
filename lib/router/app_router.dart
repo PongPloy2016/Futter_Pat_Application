@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_pat_application/core/utils/navigator_key.dart';
 
@@ -8,6 +8,8 @@ import 'package:flutter_pat_application/features/auth/presentation/screens/regis
 import 'package:flutter_pat_application/features/appointment/domain/entities/Appointment_entity.dart';
 import 'package:flutter_pat_application/features/appointment/presentation/screens/appointment_list_selete_screen.dart';
 import 'package:flutter_pat_application/features/appointment/presentation/screens/appointment_reserve_screen.dart';
+import 'package:flutter_pat_application/features/booking_confrim_queue/presentation/screens/booking_confirm_queue_screen.dart';
+import 'package:flutter_pat_application/features/communication/presentation/screens/communication_screen.dart';
 import 'package:flutter_pat_application/features/appointment/presentation/screens/appointment_document_screen.dart';
 import 'package:flutter_pat_application/features/otp/presentation/screen/confirm_otp_screen.dart';
 import 'package:flutter_pat_application/features/pin/presentation/confirm_pin_screen.dart';
@@ -31,7 +33,7 @@ import '../features/auth/data/models/otp_model.dart';
 import 'extras/payment_extra.dart';
 
 class AppRouter {
-  // Route Names (สำหรับใช้อ้างอิงใน GoRouter)
+  // Route Names (เธชเธณเธซเธฃเธฑเธเนเธเนเธญเนเธฒเธเธญเธดเธเนเธ GoRouter)
   static const String loginMain = 'loginMain';
   static const String login = 'login';
   static const String register = 'register';
@@ -45,7 +47,9 @@ class AppRouter {
   static const String notifications = 'notifications';
   static const String appointmentRenewal = 'appointmentRenewal';
   static const String appointmentReserve = 'appointmentReserve';
+  static const String appointmentConfirmBooking = 'appointmentConfirmBooking';
   static const String appointmentDocument = 'appointmentDocument';
+  static const String communication = 'communication';
   static const String contractList = 'contractList';
   static const String createContract = 'createContract';
   static const String scanContract = 'scanContract';
@@ -154,7 +158,12 @@ class AppRouter {
         builder: (context, state) => NotificationsScreen(),
       ),
 
-
+      // --- Communication ---
+      GoRoute(
+        path: '/communication',
+        name: communication,
+        builder: (context, state) => const CommunicationScreen(),
+      ),
 
       // --- Appointment ---
       GoRoute(
@@ -168,6 +177,14 @@ class AppRouter {
             builder: (context, state) {
               final contract = state.extra as AppointmentEntity?;
               return AppointmentReserveScreen(contract: contract);
+            },
+          ),
+          GoRoute(
+            path: 'confirm',
+            name: appointmentConfirmBooking,
+            builder: (context, state) {
+              final bookingId = state.extra as String? ?? '210000001';
+              return BookingConfirmQueueScreen(bookingId: bookingId);
             },
           ),
           GoRoute(
@@ -207,7 +224,7 @@ class AppRouter {
         builder: (context, state) => const PaymentCardScreen(),
       ),
 
-      // --- Payment (ชำระเงิน) ---
+      // --- Payment (เธเธณเธฃเธฐเน€เธเธดเธ) ---
       GoRoute(
         path: '/payment',
         name: payment,

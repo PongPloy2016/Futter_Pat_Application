@@ -13,19 +13,22 @@ class AppointmentBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.pop(),
-      child: Container(
-        width: 42.w,
-        height: 42.w,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: appointmentPrimaryBlue, width: 1.5),
-        ),
-        child: Icon(
-          Icons.arrow_back_rounded,
-          color: appointmentPrimaryBlue,
-          size: 24.sp,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () => context.pop(),
+        child: Container(
+          width: 30.w,
+          height: 30.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: appointmentPrimaryBlue, width: 1.5),
+          ),
+          child: Icon(
+            Icons.arrow_back_rounded,
+            color: appointmentPrimaryBlue,
+            size: 24.sp,
+          ),
         ),
       ),
     );
@@ -66,10 +69,7 @@ class AppointmentTitle extends StatelessWidget {
 }
 
 class AppointmentSearchField extends StatelessWidget {
-  const AppointmentSearchField({
-    super.key,
-    required this.controller,
-  });
+  const AppointmentSearchField({super.key, required this.controller});
 
   final TextEditingController controller;
 
@@ -142,10 +142,7 @@ class AppointmentEmptyState extends StatelessWidget {
 }
 
 class AppointmentSubmitButton extends StatelessWidget {
-  const AppointmentSubmitButton({
-    super.key,
-    required this.selectedContract,
-  });
+  const AppointmentSubmitButton({super.key, required this.selectedContract});
 
   final AppointmentEntity? selectedContract;
 
@@ -177,8 +174,10 @@ class AppointmentSubmitButton extends StatelessWidget {
           ),
           child: ElevatedButton(
             onPressed: isEnabled
-                ? () => context.push('/appointment/reserve',
-                    extra: selectedContract)
+                ? () => context.push(
+                    '/appointment/reserve',
+                    extra: selectedContract,
+                  )
                 : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
@@ -230,8 +229,9 @@ class AppointmentContractCard extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(22.r),
             border: Border.all(
-              color:
-                  isSelected ? appointmentPrimaryBlue : const Color(0xFFF2F4FF),
+              color: isSelected
+                  ? appointmentPrimaryBlue
+                  : const Color(0xFFF2F4FF),
               width: isSelected ? 1.5 : 1,
             ),
             boxShadow: [

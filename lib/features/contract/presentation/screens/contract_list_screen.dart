@@ -81,7 +81,6 @@ class ContractListScreen extends ConsumerWidget {
               Center(
                 child: ContractPrimaryButton(
                   label: 'เพิ่มสัญญา',
-
                   onPressed: () => context.pushNamed(AppRouter.createContract),
                 ),
               ),

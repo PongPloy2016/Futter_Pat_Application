@@ -3,7 +3,7 @@ import '../../domain/repositories/appointment_repository.dart';
 import '../datasources/appointment_remote_datasource.dart';
 
 class AppointmentRepositoryImpl implements AppointmentRepository {
-  final AppointmentRemoteDataSourceImpl remoteDataSource;
+  final AppointmentRemoteDataSource remoteDataSource;
 
   AppointmentRepositoryImpl({required this.remoteDataSource});
 

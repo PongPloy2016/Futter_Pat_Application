@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pat_application/features/appointment/widgets/appointment_reserve_widgets.dart';
+import 'package:flutter_pat_application/features/appointment/widgets/appointment_widget.dart';
+import 'package:flutter_pat_application/shared/widgets/appbar/custom_title_customer_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/entities/Appointment_entity.dart';
@@ -63,6 +66,13 @@ class _AppointmentReserveScreenState extends State<AppointmentReserveScreen> {
     final contract = widget.contract ?? _mockContract;
 
     return Scaffold(
+      appBar: CustomtitleCustomerAppBar(
+        title: 'นัดหมาย',
+        onSuccess: () {
+          print("Test nav  communication ");
+          context.pushNamed('communication');
+        },
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -70,7 +80,7 @@ class _AppointmentReserveScreenState extends State<AppointmentReserveScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const AppointmentReserveHeader(),
+              // const AppointmentReserveHeader(),
               SizedBox(height: 26.h),
               const AppointmentReserveTitle(),
               SizedBox(height: 10.h),
@@ -91,7 +101,8 @@ class _AppointmentReserveScreenState extends State<AppointmentReserveScreen> {
                     _selectedDate = date;
                     _displayedMonth = DateTime(date.year, date.month);
                     Fluttertoast.showToast(
-                      msg: 'เลือกวันที่ ${DateFormat('d MMMM yyyy', 'th').format(date)}',
+                      msg:
+                          'เลือกวันที่ ${DateFormat('d MMMM yyyy', 'th').format(date)}',
                       toastLength: Toast.LENGTH_SHORT,
                     );
                   });
@@ -144,17 +155,7 @@ class _AppointmentReserveScreenState extends State<AppointmentReserveScreen> {
   }
 
   void _submitReservation(AppointmentEntity contract) {
-    final timeText = _selectedTime ?? '-';
-    final dateText = DateFormat('d MMMM yyyy', 'th').format(_selectedDate);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          'จองนัดหมายสัญญา ${contract.contractId} วันที่ $dateText เวลา $timeText แล้ว',
-          style: const TextStyle(fontFamily: 'Kanit'),
-        ),
-      ),
-    );
+    const bookingId = '210000001';
+    context.push('/appointment/confirm', extra: bookingId);
   }
 }

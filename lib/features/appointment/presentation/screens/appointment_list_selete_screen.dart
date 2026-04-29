@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../shared/widgets/button/button_customs.dart';
 import '../../domain/entities/Appointment_entity.dart';
 import '../../widgets/appointment_widget.dart';
 import '../providers/appointment_contract_provider.dart';
@@ -87,8 +89,27 @@ class _AppointmentListSeleteScreenState
                 ),
               ),
               Center(
-                child: AppointmentSubmitButton(
-                  selectedContract: _selectedContract,
+                child: PrimarySubmitsButton(
+                  text: "ต่อสัญญา",
+                  onPressed: () {
+                    if (_selectedContract != null) {
+                      context.push(
+                        '/appointment/reserve',
+                        extra: _selectedContract,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'กรุณาเลือกสัญญาก่อนดำเนินการต่ออายุ',
+                            style: TextStyle(fontFamily: 'Kanit'),
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
               SizedBox(height: 28.h),
@@ -112,8 +133,14 @@ class _AppointmentListSeleteScreenState
         return contract.contractId == _selectedContractId;
       }(),
     )) {
-      _selectedContractId = null;
-      _selectedContract = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _selectedContractId = null;
+            _selectedContract = null;
+          });
+        }
+      });
     }
 
     return ListView.separated(
@@ -142,8 +169,8 @@ class _AppointmentListSeleteScreenState
     }
 
     return contracts.where((contract) {
-      final searchableText =
-          '${contract.contractId} ${contract.contractName}'.toLowerCase();
+      final searchableText = '${contract.contractId} ${contract.contractName}'
+          .toLowerCase();
       return searchableText.contains(_searchQuery);
     }).toList();
   }
