@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pat_application/features/appointment/widgets/appointment_reserve_widgets.dart';
@@ -8,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../router/app_router.dart';
 import '../../domain/entities/Appointment_entity.dart';
 import '../../widgets/appointment_calendar.dart';
 
@@ -67,7 +69,7 @@ class _AppointmentReserveScreenState extends State<AppointmentReserveScreen> {
 
     return Scaffold(
       appBar: CustomtitleCustomerAppBar(
-        title: 'นัดหมาย',
+        title: '',
         onSuccess: () {
           print("Test nav  communication ");
           context.pushNamed('communication');
@@ -139,7 +141,20 @@ class _AppointmentReserveScreenState extends State<AppointmentReserveScreen> {
                 maxLines: 2,
               ),
               SizedBox(height: 18.h),
-              const AppointmentAttachFileButton(),
+              AppointmentAttachFileButton(
+                onTap: () async {
+                  final result = await context.pushNamed<List<PlatformFile>>(
+                    AppRouter.attachFileDocuments,
+                  );
+                  if (result != null && result.isNotEmpty) {
+                    for (var file in result) {
+                      print("appointmentDocument file name : ${file.name}");
+                      print("appointmentDocument file path : ${file.path}");
+                      print("appointmentDocument file size : ${file.size}");
+                    }
+                  }
+                },
+              ),
               SizedBox(height: 22.h),
               Center(
                 child: AppointmentReserveSubmitButton(

@@ -4,85 +4,29 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_pat_application/shared/widgets/main/service_menu_item.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../router/app_router.dart';
+import 'package:flutter_pat_application/features/home/domain/entities/home_service_item.dart';
+import 'package:flutter_pat_application/core/di/injection.dart';
+import 'package:flutter_pat_application/features/home/domain/usecases/get_home_services_usecase.dart';
 
-class MainPageScreen extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/home_provider.dart';
+
+class MainPageScreen extends ConsumerStatefulWidget {
   const MainPageScreen({super.key});
 
   @override
-  State<MainPageScreen> createState() => _MainPageScreenState();
+  ConsumerState<MainPageScreen> createState() => _MainPageScreenState();
 }
 
-class _MainPageScreenState extends State<MainPageScreen> {
+class _MainPageScreenState extends ConsumerState<MainPageScreen> {
   final PageController _pageController = PageController();
   int _currentNewsIndex = 0;
 
-  final List<String> newsItems = [
-    "ประกาศการท่าเรือแห่งประเทศไทย เรื่อง ขอเชิญชวนผู้สนใจใช้พื้นที่ในเขตท่าเรือระนอง เนื้อที่จำนวน 10,120 ตารางเมตร",
-    "ประกาศการท่าเรือแห่งประเทศไทย เลื่อนการประชาพิจารณ์",
-    "ประกาศรับสมัครพนักงานการท่าเรือแห่งประเทศไทย",
-    "ประกาศการท่าเรือแห่งประเทศไทย เรื่อง ขอเชิญชวนผู้สนใจใช้พื้นที่ในเขตท่าเรือระนอง เนื้อที่จำนวน 10,120 ตารางเมตร",
-    "ประกาศการท่าเรือแห่งประเทศไทย เลื่อนการประชาพิจารณ์",
-    "ประกาศรับสมัครพนักงานการท่าเรือแห่งประเทศไทย",
-  ];
-
-  final List<Map<String, dynamic>> services = [
-    {
-      "name": "สัญญา",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_contract.png",
-      "routeName": AppRouter.contractList,
-    },
-    {
-      "name": "นัดหมาย",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_clock.png",
-      "routeName": AppRouter.appointmentRenewal,
-    },
-    {
-      "name": "ใบแจ้งหนี้",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_money.png",
-    },
-    {
-      "name": "ตรวจสอบ\nสถานะนัดหมาย",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_project-status.png",
-    },
-    {
-      "name": "ใบเสร็จ/ใบกำกับ\nภาษี",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_receipt.png",
-    },
-    {
-      "name": "ประวัติการ\nชำระเงิน",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_transaction_history.png",
-    },
-    {
-      "name": "ประวัติการใช้\nไฟฟ้า",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_eco_house.png",
-    },
-    {
-      "name": "ประวัติการใช้\nน้ำประปา",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_water_tap.png",
-    },
-    {
-      "name": "ประวัติการใช้\nโทรศัพท์",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_phone_call.png",
-    },
-    {
-      "name": "การสื่อสาร",
-      "icon": "lib/assets/icons/ic_svg_receipt.svg",
-      "iconpng": "lib/assets/icons/ic_phone_call.png",
-      "routeName": AppRouter.communication,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final homeState = ref.watch(homeProvider);
+    final newsItems = homeState.newsItems;
+    final services = homeState.services;
     return Scaffold(
       backgroundColor: const Color(
         0xFFEAF1F6,
@@ -201,7 +145,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
                         itemCount: newsItems.length,
                         itemBuilder: (context, index) {
                           return Text(
-                            newsItems[index],
+                            newsItems[index].title,
                             style: TextStyle(
                               fontSize: 15.sp,
                               color: Colors.black87,
@@ -282,22 +226,31 @@ class _MainPageScreenState extends State<MainPageScreen> {
                 ),
                 itemCount: services.length,
                 itemBuilder: (context, index) {
-                  final routeName = services[index]['routeName'] as String?;
+                  final service = services[index];
+                  final routeName = service.routeName;
                   return ServiceMenuItem(
-                    name: services[index]['name'],
+                    name: service.name,
                     iconpng:
-                        services[index]['iconpng'] ??
-                        "lib/assets/icons/ic_receipt.png",
+                        service.iconPng ?? "lib/assets/icons/ic_receipt.png",
                     onTap: () {
                       if (routeName != null) {
                         context.pushNamed(routeName);
                         return;
                       }
-                      if (services[index]['name'] == 'สัญญา') {
+                      if (service.name == 'สัญญา') {
                         context.pushNamed(AppRouter.contractList);
                       }
-                      if (services[index]['name'] == 'นัดหมาย') {
+                      if (service.name == 'นัดหมาย') {
                         context.pushNamed(AppRouter.appointmentRenewal);
+                      }
+                      if (service.name == 'ตรวจสอบ\nสถานะนัดหมาย') {
+                        context.pushNamed(AppRouter.checkAppointments);
+                      }
+                      if (service.name == 'ใบแจ้งหนี้') {
+                        context.pushNamed(AppRouter.invoice);
+                      }
+                      if (service.name == 'ใบเสร็จ/ใบกำกับ\nภาษี') {
+                        context.pushNamed(AppRouter.receiptTaxInvoice);
                       }
                     },
                   );

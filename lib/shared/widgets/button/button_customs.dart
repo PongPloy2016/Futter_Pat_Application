@@ -9,11 +9,15 @@ class PrimarySubmitsButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.background,
+    this.width,
+    this.height,
   });
 
   final String text;
   final Color? background;
   final void Function()? onPressed;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +25,8 @@ class PrimarySubmitsButton extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       opacity: 1,
       child: SizedBox(
-        width: 118.w,
-        height: 44.h,
+        width: width ?? 118.w,
+        height: height ?? 44.h,
         child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.r),

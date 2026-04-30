@@ -14,11 +14,13 @@ class CustomtitleCustomerAppBar extends StatelessWidget
     this.backgroundColor,
     this.actions,
     required this.onSuccess,
+    this.showActions = true,
   });
 
   final String title;
   final Color? backgroundColor;
   final List<Widget>? actions;
+  final bool showActions;
   final void Function() onSuccess;
 
   @override
@@ -26,7 +28,6 @@ class CustomtitleCustomerAppBar extends StatelessWidget
     return AppBar(
       elevation: 0,
       leading: AppointmentBackButton(),
-      // backgroundColor: const Color(headerColor),
       title: CustomText(
         title,
         textAlign: TextAlign.center,
@@ -38,35 +39,36 @@ class CustomtitleCustomerAppBar extends StatelessWidget
       ),
       centerTitle: true,
       automaticallyImplyLeading: false,
-
-      // leading: IconButton(
-      //   icon: const Icon(Icons.keyboard_arrow_left),
-      //   onPressed: () => {onSuccess.call()},
-      // ),
-
-      // leading: null, // ซ่อนปุ่ม Back
-      actions: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () => onSuccess.call(),
-            child: Container(
-              width: 30.w,
-              height: 30.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: appointmentPrimaryBlue, width: 1.5),
-              ),
-              child: Image.asset(
-                'lib/assets/icons/ic_customer_service.png',
-                width: 40.w,
-                height: 40.w,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ),
-      ],
+      actions:
+          actions ??
+          (showActions
+              ? [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () => onSuccess.call(),
+                      child: Container(
+                        width: 30.w,
+                        height: 30.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: appointmentPrimaryBlue,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Image.asset(
+                            'lib/assets/icons/ic_customer_service.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ]
+              : null),
     );
   }
 

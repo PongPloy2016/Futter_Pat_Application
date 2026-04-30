@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../router/app_router.dart';
 
 class CommunicationTabs extends StatelessWidget {
-  const CommunicationTabs({super.key});
+  const CommunicationTabs({super.key, required this.onNavigation});
+
+  final Function onNavigation;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,11 @@ class CommunicationTabs extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.chat_bubble_outline, color: const Color(0xFF009ADB), size: 20.sp),
+                  Icon(
+                    Icons.chat_bubble_outline,
+                    color: const Color(0xFF009ADB),
+                    size: 20.sp,
+                  ),
                   SizedBox(width: 8.w),
                   Text(
                     'ข้อความ',
@@ -41,22 +50,31 @@ class CommunicationTabs extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.attach_file, color: const Color(0xFF6B6B6B), size: 20.sp),
-                  SizedBox(width: 8.w),
-                  Text(
-                    'ไฟล์แนบ',
-                    style: TextStyle(
-                      fontFamily: 'Kanit',
-                      fontSize: 16.sp,
+            child: GestureDetector(
+              onTap: () {
+                onNavigation();
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.attach_file,
                       color: const Color(0xFF6B6B6B),
+                      size: 20.sp,
                     ),
-                  ),
-                ],
+                    SizedBox(width: 8.w),
+                    Text(
+                      'ไฟล์แนบ',
+                      style: TextStyle(
+                        fontFamily: 'Kanit',
+                        fontSize: 16.sp,
+                        color: const Color(0xFF6B6B6B),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

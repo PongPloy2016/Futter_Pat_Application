@@ -1,4 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_pat_application/features/invoice/presentation/screens/invoice_screen.dart';
+import 'package:flutter_pat_application/features/receipt_tax_invoice/presentation/screens/receipt_tax_invoice_screen.dart';
+import 'package:flutter_pat_application/features/receipt_tax_invoice/presentation/screens/receipt_tax_invoice_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_pat_application/core/utils/navigator_key.dart';
 
@@ -9,8 +12,9 @@ import 'package:flutter_pat_application/features/appointment/domain/entities/App
 import 'package:flutter_pat_application/features/appointment/presentation/screens/appointment_list_selete_screen.dart';
 import 'package:flutter_pat_application/features/appointment/presentation/screens/appointment_reserve_screen.dart';
 import 'package:flutter_pat_application/features/booking_confrim_queue/presentation/screens/booking_confirm_queue_screen.dart';
+import 'package:flutter_pat_application/features/checkAppointments/presentation/screens/check_appointments_screen.dart';
 import 'package:flutter_pat_application/features/communication/presentation/screens/communication_screen.dart';
-import 'package:flutter_pat_application/features/appointment/presentation/screens/appointment_document_screen.dart';
+import 'package:flutter_pat_application/features/attachFileDocuments/presentation/screens/attach_file_documents_screen.dart';
 import 'package:flutter_pat_application/features/otp/presentation/screen/confirm_otp_screen.dart';
 import 'package:flutter_pat_application/features/pin/presentation/confirm_pin_screen.dart';
 import 'package:flutter_pat_application/features/pin/presentation/create_pin_screen.dart';
@@ -48,7 +52,9 @@ class AppRouter {
   static const String appointmentRenewal = 'appointmentRenewal';
   static const String appointmentReserve = 'appointmentReserve';
   static const String appointmentConfirmBooking = 'appointmentConfirmBooking';
-  static const String appointmentDocument = 'appointmentDocument';
+  static const String attachFileDocuments = 'attachFileDocuments';
+  static const String checkAppointments = 'checkAppointments';
+  static const String invoice = 'invoice';
   static const String communication = 'communication';
   static const String contractList = 'contractList';
   static const String createContract = 'createContract';
@@ -58,6 +64,8 @@ class AppRouter {
   static const String createPin = 'createPin';
   static const String confirmPin = 'confirmPin';
   static const String payment = 'payment';
+  static const String receiptTaxInvoice = 'receiptTaxInvoice';
+  static const String receiptTaxInvoiceDetail = 'receiptTaxInvoiceDetail';
 
   // GoRouter Instance
   static final GoRouter router = GoRouter(
@@ -165,6 +173,30 @@ class AppRouter {
         builder: (context, state) => const CommunicationScreen(),
       ),
 
+      // --- Check Appointments ---
+      GoRoute(
+        path: '/checkAppointments',
+        name: checkAppointments,
+        builder: (context, state) => const CheckAppointmentsScreen(),
+      ),
+
+      // --- Invoice ---
+      GoRoute(
+        path: '/invoice',
+        name: invoice,
+        builder: (context, state) => const InvoiceScreen(),
+      ),
+      GoRoute(
+        path: '/receiptTaxInvoice',
+        name: receiptTaxInvoice,
+        builder: (context, state) => const ReceiptTaxInvoiceScreen(),
+      ),
+      GoRoute(
+        path: '/receiptTaxInvoiceDetail',
+        name: receiptTaxInvoiceDetail,
+        builder: (context, state) => const ReceiptTaxInvoiceDetailScreen(),
+      ),
+
       // --- Appointment ---
       GoRoute(
         path: '/appointment',
@@ -189,8 +221,8 @@ class AppRouter {
           ),
           GoRoute(
             path: 'document',
-            name: 'appointmentDocument',
-            builder: (context, state) => const AppointmentDocumentScreen(),
+            name: 'attachFileDocuments',
+            builder: (context, state) => const AttachFileDocumentsScreen(),
           ),
         ],
       ),

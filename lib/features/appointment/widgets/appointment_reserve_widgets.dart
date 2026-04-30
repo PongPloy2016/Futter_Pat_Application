@@ -173,7 +173,6 @@ class AppointmentSectionTitle extends StatelessWidget {
   }
 }
 
-
 class AppointmentCalendarDayCell extends StatelessWidget {
   const AppointmentCalendarDayCell({
     super.key,
@@ -380,7 +379,9 @@ class AppointmentReserveInputField extends StatelessWidget {
 }
 
 class AppointmentAttachFileButton extends StatelessWidget {
-  const AppointmentAttachFileButton({super.key});
+  const AppointmentAttachFileButton({super.key, required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +390,7 @@ class AppointmentAttachFileButton extends StatelessWidget {
       height: 28.h,
       child: ElevatedButton(
         onPressed: () {
-          context.pushNamed(AppRouter.appointmentDocument);
+          onTap();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF263C96),

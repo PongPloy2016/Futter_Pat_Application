@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pat_application/router/app_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../providers/communication_provider.dart';
 import '../widgets/communication_header.dart';
@@ -14,7 +17,8 @@ class CommunicationScreen extends ConsumerStatefulWidget {
   const CommunicationScreen({super.key});
 
   @override
-  ConsumerState<CommunicationScreen> createState() => _CommunicationScreenState();
+  ConsumerState<CommunicationScreen> createState() =>
+      _CommunicationScreenState();
 }
 
 class _CommunicationScreenState extends ConsumerState<CommunicationScreen> {
@@ -48,9 +52,34 @@ class _CommunicationScreenState extends ConsumerState<CommunicationScreen> {
                     SizedBox(height: 20.h),
                     const CommunicationContractCard(),
                     SizedBox(height: 20.h),
-                    const CommunicationTabs(),
+                    CommunicationTabs(
+                      onNavigation: () async {
+                        final result = await context
+                            .pushNamed<List<PlatformFile>>(
+                              AppRouter.attachFileDocuments,
+                            );
+                        if (result != null && result.isNotEmpty) {
+                          for (var file in result) {
+                            ref
+                                .read(communicationProvider.notifier)
+                                .sendMessage('แนบไฟล์: ${file.name}');
+                          }
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            if (_scrollController.hasClients) {
+                              _scrollController.animateTo(
+                                _scrollController.position.maxScrollExtent,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeOut,
+                              );
+                            }
+                          });
+                        }
+                      },
+                    ),
                     SizedBox(height: 20.h),
-                    CommunicationChatArea(chatState: ref.watch(communicationProvider)),
+                    CommunicationChatArea(
+                      chatState: ref.watch(communicationProvider),
+                    ),
                   ],
                 ),
               ),
@@ -64,8 +93,6 @@ class _CommunicationScreenState extends ConsumerState<CommunicationScreen> {
       ),
     );
   }
-
-
 
   void _sendMessage() {
     final text = _messageController.text.trim();
@@ -85,7 +112,4 @@ class _CommunicationScreenState extends ConsumerState<CommunicationScreen> {
       }
     });
   }
-
-
 }
-
