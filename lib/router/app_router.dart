@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pat_application/features/invoice/presentation/screens/invoice_screen.dart';
 import 'package:flutter_pat_application/features/receipt_tax_invoice/presentation/screens/receipt_tax_invoice_screen.dart';
 import 'package:flutter_pat_application/features/receipt_tax_invoice/presentation/screens/receipt_tax_invoice_detail_screen.dart';
+import 'package:flutter_pat_application/features/receipt_tax_invoice/presentation/screens/pdf_viewer_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_pat_application/core/utils/navigator_key.dart';
 
@@ -66,6 +67,7 @@ class AppRouter {
   static const String payment = 'payment';
   static const String receiptTaxInvoice = 'receiptTaxInvoice';
   static const String receiptTaxInvoiceDetail = 'receiptTaxInvoiceDetail';
+  static const String pdfViewer = 'pdfViewer';
 
   // GoRouter Instance
   static final GoRouter router = GoRouter(
@@ -195,6 +197,17 @@ class AppRouter {
         path: '/receiptTaxInvoiceDetail',
         name: receiptTaxInvoiceDetail,
         builder: (context, state) => const ReceiptTaxInvoiceDetailScreen(),
+      ),
+      GoRoute(
+        path: '/pdfViewer',
+        name: pdfViewer,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return PdfViewerScreen(
+            pdfPath: extra['pdfPath'] as String,
+            title: extra['title'] as String? ?? 'ดูตัวอย่างเอกสาร',
+          );
+        },
       ),
 
       // --- Appointment ---

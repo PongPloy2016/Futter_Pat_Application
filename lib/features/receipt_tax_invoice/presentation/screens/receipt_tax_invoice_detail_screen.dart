@@ -1,6 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/services/receipt_pdf_service.dart';
+import '../../../../core/services/share_service.dart';
+import '../../../../router/app_router.dart';
 import '../../../../shared/widgets/appbar/custom_title_customer_app_bar.dart';
 
 class ReceiptTaxInvoiceDetailScreen extends StatelessWidget {
@@ -106,19 +110,22 @@ class ReceiptTaxInvoiceDetailScreen extends StatelessWidget {
                 SizedBox(height: 16.h),
                 const Divider(color: Color(0xFFF1F5F9), thickness: 1),
                 SizedBox(height: 16.h),
-                
+
                 // Customer Info Section
                 _buildInfoSection(
                   color: const Color(0xFFEBF6FF),
                   children: [
                     _buildInfoRow('รหัสลูกหนี้', '2101/2569'),
                     _buildInfoRow('ชื่อ-นามสกุล', 'นายสมใจ ใจดี'),
-                    _buildInfoRow('ที่อยู่', '476/97 หมู่ 8 ต.ในเมือง เมืองราชบุรี\nราชบุรี 74557'),
+                    _buildInfoRow(
+                      'ที่อยู่',
+                      '476/97 หมู่ 8 ต.ในเมือง เมืองราชบุรี\nราชบุรี 74557',
+                    ),
                   ],
                 ),
-                
+
                 SizedBox(height: 16.h),
-                
+
                 // Payment Info Section
                 _buildInfoSection(
                   color: const Color(0xFFEBF6FF),
@@ -138,7 +145,10 @@ class ReceiptTaxInvoiceDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoSection({required Color color, required List<Widget> children}) {
+  Widget _buildInfoSection({
+    required Color color,
+    required List<Widget> children,
+  }) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -146,9 +156,7 @@ class ReceiptTaxInvoiceDetailScreen extends StatelessWidget {
         color: color,
         borderRadius: BorderRadius.circular(16.r),
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -194,7 +202,11 @@ class ReceiptTaxInvoiceDetailScreen extends StatelessWidget {
             child: _buildActionButton(
               icon: Icons.share_outlined,
               label: 'แชร์',
-              onPressed: () {},
+              onPressed: () async{
+                final Uint8List bytes = await ReceiptPdfService.generatePdf();
+                final String path = await ReceiptPdfService.savePdfFile(bytes);
+                await ShareService.sharePdf(path);
+              },
             ),
           ),
           SizedBox(width: 16.w),
@@ -202,7 +214,31 @@ class ReceiptTaxInvoiceDetailScreen extends StatelessWidget {
             child: _buildActionButton(
               icon: Icons.file_download_outlined,
               label: 'ดาวน์โหลด PDF',
-              onPressed: () {},
+              onPressed: () async {
+                try {
+                  // แสดง Loading หรือบอกให้ผู้ใช้ทราบ
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('กำลังเตรียมไฟล์ PDF...')),
+                  );
+
+                  final String path = await ReceiptPdfService.generatePdfFile();
+
+                  // if (context.mounted) {
+                  //   context.pushNamed(
+                  //     AppRouter.pdfViewer,
+                  //     extra: {
+                  //       'pdfPath': path,
+                  //       'title': 'ใบเสร็จรับเงิน',
+                  //     },
+                  //   );
+                  // }
+                } catch (e) {
+                  print(e);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('เกิดข้อผิดพลาด: ${e.toString()}')),
+                  );
+                }
+              },
             ),
           ),
         ],
