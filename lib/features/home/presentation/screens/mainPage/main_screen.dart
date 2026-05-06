@@ -252,6 +252,21 @@ class _MainPageScreenState extends ConsumerState<MainPageScreen> {
                       if (service.name == 'ใบเสร็จ/ใบกำกับ\nภาษี') {
                         context.pushNamed(AppRouter.receiptTaxInvoice);
                       }
+                      if (service.name == 'ประวัติการ\nชำระเงิน') {
+                        context.pushNamed(AppRouter.paymentHistory);
+                      }
+                      if (service.name == 'ประวัติการใช้\nไฟฟ้า') {
+                        print('ประวัติการใช้ไฟฟ้า');
+                        context.pushNamed(AppRouter.usageHistory);
+                      }
+                      if (service.name == 'ประวัติการใช้\nน้ำประปา') {
+                        print('ประวัติการใช้น้ำประปา');
+                        context.pushNamed(AppRouter.usageHistory);
+                      }
+                      if (service.name == 'ประวัติการใช้\nโทรศัพท์') {
+                        print('ประวัติการใช้โทรศัพท์');
+                        context.pushNamed(AppRouter.usageHistory);
+                      }
                     },
                   );
                 },

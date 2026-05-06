@@ -40,6 +40,15 @@ import '../../features/receipt_tax_invoice/data/repositories/receipt_tax_invoice
 import '../../features/receipt_tax_invoice/domain/repositories/receipt_tax_invoice_repository.dart';
 import '../../features/receipt_tax_invoice/domain/usecases/request_receipt_tax_invoice_usecase.dart';
 
+import '../../features/payment_history/data/datasources/payment_remote_datasource.dart';
+import '../../features/payment_history/data/repositories/payment_repository_impl.dart';
+import '../../features/payment_history/domain/repositories/payment_history_repository.dart';
+import '../../features/payment_history/domain/usecases/get_payment_history_usecase.dart';
+import '../../features/ีีusageHistory/data/datasources/usageHistory_remote_datasource.dart';
+import '../../features/ีีusageHistory/data/repositories/usageHistory_repository_impl.dart';
+import '../../features/ีีusageHistory/domain/repositories/usageHistory_repository.dart';
+import '../../features/ีีusageHistory/domain/usecases/get_usageHistory_usecase.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initInjection() async {
@@ -52,6 +61,8 @@ Future<void> initInjection() async {
   sl.registerLazySingleton(() => GetCheckAppointmentsUseCase(sl()));
   sl.registerLazySingleton(() => GetInvoiceUseCase(sl()));
   sl.registerLazySingleton(() => RequestReceiptTaxInvoiceUseCase(sl()));
+  sl.registerLazySingleton(() => paymentHistoryStateUseCase(sl()));
+  sl.registerLazySingleton(() => UsageHistoryUseCase(sl()));
 
   // Home Feature
   sl.registerLazySingleton<HomeRepository>(
@@ -78,6 +89,12 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<ReceiptTaxInvoiceRepository>(
     () => ReceiptTaxInvoiceRepositoryImpl(remoteDataSource: sl()),
   );
+  sl.registerLazySingleton<PaymentHistoryRepository>(
+    () => PaymentHistoryRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<UsageHistoryRepository>(
+    () => UsageHistoryRepositoryImpl(remoteDataSource: sl()),
+  );
 
   // Data sources
   sl.registerLazySingleton<ContractRemoteDataSource>(
@@ -101,6 +118,9 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<ReceiptTaxInvoiceRemoteDataSource>(
     () => ReceiptTaxInvoiceRemoteDataSourceImpl(),
   );
+  sl.registerLazySingleton<UsageHistoryDataSource>(
+    () => UsageHistoryDataSourceImpl(),
+  );
 
   sl.registerLazySingleton<InvoiceRepository>(
     () => InvoiceRepositoryImpl(remoteDataSource: sl()),
@@ -108,5 +128,9 @@ Future<void> initInjection() async {
 
   sl.registerLazySingleton<InvoiceRemoteDataSource>(
     () => InvoiceRemoteDataSourceImpl(),
+  );
+
+  sl.registerLazySingleton<PaymentHistoryDataSource>(
+    () => PaymentHistoryDataSourceImpl(),
   );
 }

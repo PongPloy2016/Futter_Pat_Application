@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pat_application/features/invoice/presentation/screens/invoice_screen.dart';
+import 'package:flutter_pat_application/features/payment_history/presentation/screens/payment_history_screen.dart';
 import 'package:flutter_pat_application/features/receipt_tax_invoice/presentation/screens/receipt_tax_invoice_screen.dart';
 import 'package:flutter_pat_application/features/receipt_tax_invoice/presentation/screens/receipt_tax_invoice_detail_screen.dart';
 import 'package:flutter_pat_application/features/receipt_tax_invoice/presentation/screens/pdf_viewer_screen.dart';
+import 'package:flutter_pat_application/features/ีีusageHistory/presentation/screens/usageHistory_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_pat_application/core/utils/navigator_key.dart';
 
@@ -57,6 +59,7 @@ class AppRouter {
   static const String checkAppointments = 'checkAppointments';
   static const String invoice = 'invoice';
   static const String communication = 'communication';
+  static const String paymentHistory = 'paymentHistory';
   static const String contractList = 'contractList';
   static const String createContract = 'createContract';
   static const String scanContract = 'scanContract';
@@ -68,6 +71,7 @@ class AppRouter {
   static const String receiptTaxInvoice = 'receiptTaxInvoice';
   static const String receiptTaxInvoiceDetail = 'receiptTaxInvoiceDetail';
   static const String pdfViewer = 'pdfViewer';
+  static const String usageHistory = 'usageHistory';
 
   // GoRouter Instance
   static final GoRouter router = GoRouter(
@@ -189,6 +193,11 @@ class AppRouter {
         builder: (context, state) => const InvoiceScreen(),
       ),
       GoRoute(
+        path: '/paymentHistory',
+        name: paymentHistory,
+        builder: (context, state) => const PaymentHistoryScreen(),
+      ),
+      GoRoute(
         path: '/receiptTaxInvoice',
         name: receiptTaxInvoice,
         builder: (context, state) => const ReceiptTaxInvoiceScreen(),
@@ -208,6 +217,11 @@ class AppRouter {
             title: extra['title'] as String? ?? 'ดูตัวอย่างเอกสาร',
           );
         },
+      ),
+      GoRoute(
+        path: '/usageHistory',
+        name: usageHistory,
+        builder: (context, state) => const UsageHistoryScreen(),
       ),
 
       // --- Appointment ---
