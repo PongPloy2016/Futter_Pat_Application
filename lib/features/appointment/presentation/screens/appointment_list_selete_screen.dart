@@ -4,9 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../shared/widgets/button/button_customs.dart';
-import '../../domain/entities/Appointment_entity.dart';
 import '../../widgets/appointment_widget.dart';
-import '../providers/appointment_contract_provider.dart';
+import '../providers/controller/appointment_contract_list_controller.dart';
+import '../providers/state/appointment_contract_list_state.dart';
 
 class AppointmentListSeleteScreen extends ConsumerStatefulWidget {
   const AppointmentListSeleteScreen({super.key});
@@ -19,9 +19,6 @@ class AppointmentListSeleteScreen extends ConsumerStatefulWidget {
 class _AppointmentListSeleteScreenState
     extends ConsumerState<AppointmentListSeleteScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-  String? _selectedContractId;
-  AppointmentEntity? _selectedContract;
 
   @override
   void initState() {
@@ -38,140 +35,198 @@ class _AppointmentListSeleteScreenState
   }
 
   void _onSearchChanged() {
-    setState(() {
-      _searchQuery = _searchController.text.trim().toLowerCase();
-    });
+    ref
+        .read(appointmentContractListProvider.notifier)
+        .setSearchQuery(_searchController.text);
   }
 
   @override
   Widget build(BuildContext context) {
-    final contractState = ref.watch(appointmentContractListProvider);
+    final state = ref.watch(appointmentContractListProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 8.h),
-              const AppointmentBackButton(),
-              SizedBox(height: 28.h),
-              const AppointmentTitle(),
-              SizedBox(height: 20.h),
-              AppointmentSearchField(controller: _searchController),
-              SizedBox(height: 18.h),
-              Text(
-                'รายการสัญญาที่สามารถดำเนินการต่ออายุได้',
-                style: TextStyle(
-                  fontFamily: 'Kanit',
-                  fontSize: 14.sp,
-                  color: appointmentLabelTextColor,
-                ),
-              ),
-              SizedBox(height: 14.h),
-              Expanded(
-                child: contractState.when(
-                  data: _buildContractList,
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (error, _) => Center(
-                    child: Text(
-                      'ไม่สามารถโหลดข้อมูลสัญญาได้',
-                      style: TextStyle(
-                        fontFamily: 'Kanit',
-                        fontSize: 16.sp,
-                        color: Colors.red.shade400,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Center(
-                child: PrimarySubmitsButton(
-                  text: "ต่อสัญญา",
-                  onPressed: () {
-                    if (_selectedContract != null) {
-                      context.push(
-                        '/appointment/reserve',
-                        extra: _selectedContract,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'กรุณาเลือกสัญญาก่อนดำเนินการต่ออายุ',
-                            style: TextStyle(fontFamily: 'Kanit'),
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                          backgroundColor: Colors.redAccent,
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-              SizedBox(height: 28.h),
-            ],
+      backgroundColor: const Color(0xFFF5F7FB),
+      body: Column(
+        children: [
+          _buildHeader(),
+          Expanded(
+            child: _buildBody(state),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildContractList(List<AppointmentEntity> contracts) {
-    final filteredContracts = _filterContracts(contracts);
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 10.h,
+        bottom: 20.h,
+        left: 24.w,
+        right: 24.w,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF009ADB),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(0.r),
+          bottomRight: Radius.circular(0.r),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Placeholder for profile/back if needed, but image shows centered title
+              SizedBox(width: 40.w),
+              Text(
+                'การนัดหมาย',
+                style: TextStyle(
+                  fontFamily: 'Kanit',
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              Row(
+                children: [
+                  Icon(Icons.notifications_none_rounded,
+                      color: Colors.white, size: 28.sp),
+                  SizedBox(width: 12.w),
+                  Container(
+                    width: 32.w,
+                    height: 32.w,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        'อ',
+                        style: TextStyle(
+                          color: const Color(0xFF009ADB),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-    if (filteredContracts.isEmpty) {
-      return const AppointmentEmptyState();
+  Widget _buildBody(AppointmentContractListState state) {
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    if (!filteredContracts.any(
-      (contract) => () {
-        if (_selectedContractId == null) return true;
-        return contract.contractId == _selectedContractId;
-      }(),
-    )) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() {
-            _selectedContractId = null;
-            _selectedContract = null;
-          });
-        }
-      });
+    if (state.errorMessage != null) {
+      return Center(
+        child: Text(
+          'ไม่สามารถโหลดข้อมูลสัญญาได้',
+          style: TextStyle(
+            fontFamily: 'Kanit',
+            fontSize: 16.sp,
+            color: Colors.red.shade400,
+          ),
+        ),
+      );
+    }
+
+    final contracts = state.filteredAppointments;
+
+    if (contracts.isEmpty) {
+      return AppointmentEmptyState(
+        onAddPressed: () {
+          // Navigate to add appointment flow
+          context.push('/appointment/reserve');
+        },
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20.h),
+          AppointmentSearchField(controller: _searchController),
+          SizedBox(height: 18.h),
+          Text(
+            'รายการสัญญาที่สามารถดำเนินการต่ออายุได้',
+            style: TextStyle(
+              fontFamily: 'Kanit',
+              fontSize: 14.sp,
+              color: appointmentLabelTextColor,
+            ),
+          ),
+          SizedBox(height: 14.h),
+          Expanded(
+            child: _buildContractList(state),
+          ),
+          Center(
+            child: PrimarySubmitsButton(
+              width: double.infinity,
+              text: "เพิ่มการนัดหมาย",
+              onPressed: () {
+                context.push(
+                  '/appointment/reserve',
+                  extra: state.selectedContract,
+                );
+                // if (state.selectedContract != null) {
+                //   context.push(
+                //     '/appointment/reserve',
+                //     extra: state.selectedContract,
+                //   );
+                // } else {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text(
+                //         'กรุณาเลือกสัญญาก่อนดำเนินการต่ออายุ',
+                //         style: TextStyle(fontFamily: 'Kanit'),
+                //       ),
+                //       behavior: SnackBarBehavior.floating,
+                //       backgroundColor: Colors.redAccent,
+                //     ),
+                //   );
+                // }
+              },
+            ),
+          ),
+          SizedBox(height: 28.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContractList(AppointmentContractListState state) {
+    final contracts = state.filteredAppointments;
+
+    if (contracts.isEmpty) {
+      return const AppointmentEmptyState();
     }
 
     return ListView.separated(
       padding: EdgeInsets.only(bottom: 24.h),
-      itemCount: filteredContracts.length,
+      itemCount: contracts.length,
       separatorBuilder: (_, __) => SizedBox(height: 18.h),
       itemBuilder: (context, index) {
-        final contract = filteredContracts[index];
+        final contract = contracts[index];
         return AppointmentContractCard(
           contract: contract,
-          isSelected: contract.contractId == _selectedContractId,
+          //isSelected: contract.contractId == state.selectedContractId,
           onTap: () {
-            setState(() {
-              _selectedContractId = contract.contractId;
-              _selectedContract = contract;
-            });
+            ref
+                .read(appointmentContractListProvider.notifier)
+                .selectContract(contract);
           },
         );
       },
     );
-  }
-
-  List<AppointmentEntity> _filterContracts(List<AppointmentEntity> contracts) {
-    if (_searchQuery.isEmpty) {
-      return contracts;
-    }
-
-    return contracts.where((contract) {
-      final searchableText = '${contract.contractId} ${contract.contractName}'
-          .toLowerCase();
-      return searchableText.contains(_searchQuery);
-    }).toList();
   }
 }

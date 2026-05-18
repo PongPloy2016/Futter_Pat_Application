@@ -8,7 +8,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../../router/app_router.dart';
 import '../../../../../router/extras/confirm_otp_extra.dart';
 import '../../../../../shared/widgets/logo/logo_create_pin.dart';
+import '../../../../otp/domain/entities/otp_entity.dart';
 import '../../../data/models/otp_model.dart';
+import 'package:flutter_pat_application/core/utils/widget_extensions.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -39,73 +41,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
         elevation: 0,
         leading: const BackButton(color: Color(0xFF009ADB)),
       ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
-              vertical: 10.0,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 40.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // PAT Logo
+            LogoCreatePinWidget(),
+            const SizedBox(height: 20),
+            // Title
+            const CustomTextDefault(
+              text: "ลงทะเบียนใช้งาน",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF009ADB),
+              ),
             ),
-            child: Container(
-              width: double.infinity,
+            const SizedBox(height: 30),
+            // Segmented Control (Toggle Tab)
+            Container(
+              height: 45,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(24.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
+              ),
+              child: Row(
+                children: [
+                  _buildTabItem(title: "เบอร์โทรศัพท์", index: 0),
+                  _buildTabItem(title: "ThaID", index: 1),
                 ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 40.0,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // PAT Logo
-                    LogoCreatePinWidget(),
-                    const SizedBox(height: 20),
-                    // Title
-                    const CustomTextDefault(
-                      text: "ลงทะเบียนใช้งาน",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF009ADB),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    // Segmented Control (Toggle Tab)
-                    Container(
-                      height: 45,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(24.0),
-                      ),
-                      child: Row(
-                        children: [
-                          _buildTabItem(title: "เบอร์โทรศัพท์", index: 0),
-                          _buildTabItem(title: "ThaID", index: 1),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    // Content area based on selected tab
-                    _selectedTabIndex == 0
-                        ? _buildPhoneTab()
-                        : _buildThaIDTab(),
-                  ],
-                ),
-              ),
             ),
-          ),
+            const SizedBox(height: 40),
+            // Content area based on selected tab
+            _selectedTabIndex == 0 ? _buildPhoneTab() : _buildThaIDTab(),
+          ],
         ),
-      ),
+      ).withWhiteCardLayout().withLoginBackground(),
     );
   }
 
@@ -200,7 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               AppRouter.confirmOtp,
               extra: ConfirmOtpExtra(
                 empId: '1234', // TODO: ใส่ empId จริงจาก Form
-                otpDataModel: ResponseRequestOTPDataModel(),
+                otpData: const OtpEntity(),
               ),
             );
           },

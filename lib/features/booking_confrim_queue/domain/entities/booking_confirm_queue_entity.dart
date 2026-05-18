@@ -1,3 +1,13 @@
+class BookingDocumentEntity {
+  final String fileName;
+  final String fileSize;
+
+  const BookingDocumentEntity({
+    required this.fileName,
+    required this.fileSize,
+  });
+}
+
 class BookingConfirmQueueEntity {
   final String bookingId;
   final String queueNumber;
@@ -9,6 +19,9 @@ class BookingConfirmQueueEntity {
   final String appointmentType;
   final String detail;
   final String location;
+  final String phone;
+  final String appointmentItems;
+  final List<BookingDocumentEntity> documents;
 
   const BookingConfirmQueueEntity({
     required this.bookingId,
@@ -21,5 +34,8 @@ class BookingConfirmQueueEntity {
     required this.appointmentType,
     required this.detail,
     required this.location,
+    this.phone = '',
+    this.appointmentItems = '',
+    this.documents = const [],
   });
 }

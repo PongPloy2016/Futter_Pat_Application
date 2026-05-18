@@ -9,7 +9,9 @@ import 'package:flutter_pat_application/core/di/injection.dart';
 import 'package:flutter_pat_application/features/home/domain/usecases/get_home_services_usecase.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/home_provider.dart';
+
+import '../../providers/controller/home_controller.dart';
+
 
 class MainPageScreen extends ConsumerStatefulWidget {
   const MainPageScreen({super.key});
@@ -257,15 +259,15 @@ class _MainPageScreenState extends ConsumerState<MainPageScreen> {
                       }
                       if (service.name == 'ประวัติการใช้\nไฟฟ้า') {
                         print('ประวัติการใช้ไฟฟ้า');
-                        context.pushNamed(AppRouter.usageHistory);
+                        context.pushNamed(AppRouter.usageHistory, extra: 1);
                       }
                       if (service.name == 'ประวัติการใช้\nน้ำประปา') {
                         print('ประวัติการใช้น้ำประปา');
-                        context.pushNamed(AppRouter.usageHistory);
+                        context.pushNamed(AppRouter.usageHistory, extra: 0);
                       }
                       if (service.name == 'ประวัติการใช้\nโทรศัพท์') {
                         print('ประวัติการใช้โทรศัพท์');
-                        context.pushNamed(AppRouter.usageHistory);
+                        context.pushNamed(AppRouter.usageHistory, extra: 2);
                       }
                     },
                   );

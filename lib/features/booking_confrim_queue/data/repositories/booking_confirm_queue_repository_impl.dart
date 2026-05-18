@@ -1,3 +1,4 @@
+import '../../../appointment/data/models/appointment_reserve_request_model.dart';
 import '../../domain/entities/booking_confirm_queue_entity.dart';
 import '../../domain/repositories/booking_confirm_queue_repository.dart';
 import '../datasources/booking_confirm_queue_remote_datasource.dart';
@@ -10,10 +11,10 @@ class BookingConfirmQueueRepositoryImpl
 
   @override
   Future<BookingConfirmQueueEntity> getBookingConfirmQueue(
-    String bookingId,
+    AppointmentReserveRequestModel request,
   ) async {
     try {
-      return await remoteDataSource.getBookingConfirmQueue(bookingId);
+      return await remoteDataSource.getBookingConfirmQueue(request);
     } catch (e) {
       throw Exception('Failed to load booking confirm queue data');
     }

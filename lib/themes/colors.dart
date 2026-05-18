@@ -46,3 +46,6 @@ const primaryBlueClose =  0xFF0008FF;
 const primaryBlueCloseAccent = 0x300008FF;
 const fontBoldRed = 0xFFFF5722;
 const fontBoldYallow = 0xFFFFC107;
+const primaryBlueLight  =  0xFFE9F4FF;
+const bookingItemCard1Color = 0xFF0895DF;
+

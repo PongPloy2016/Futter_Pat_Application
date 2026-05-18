@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pat_application/themes/colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'booking_confirm_queue_header.dart';
+import '../../../../shared/widgets/logo/logo_create_pin.dart';
 
+/// Badge widget: PAT Logo + "นัดหมายคิวที่" + queue number (large)
+/// Displayed inside a blue gradient card at the top of the screen
 class BookingConfirmQueueBadge extends StatelessWidget {
   const BookingConfirmQueueBadge({
     super.key,
@@ -15,74 +18,60 @@ class BookingConfirmQueueBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 150.w,
-      child: Stack(
-        alignment: Alignment.center,
+    return Container(
+      // width: double.infinity,
+      // margin: EdgeInsets.symmetric(horizontal: 20.w),
+      // padding: EdgeInsets.symmetric(vertical: 28.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Positioned(
-            left: 24.w,
-            child: Icon(
-              Icons.chevron_left_rounded,
-              size: 50.sp,
-              color: Colors.white.withValues(alpha: 0.78),
-            ),
-          ),
-          Positioned(
-            right: 24.w,
-            child: Icon(
-              Icons.chevron_right_rounded,
-              size: 50.sp,
-              color: Colors.white.withValues(alpha: 0.78),
-            ),
-          ),
+          // PAT Logo
+
+          // "การท่าเรือแห่งประเทศไทย" text
+
+          // "นัดหมายคิวที่" label
           Container(
-            width: 150.w,
-            height: 150.w,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: bookingConfirmQueuePrimaryBlue,
-            ),
+            // decoration: BoxDecoration(
+            //   color: Color(primaryBlueLight),
+            //   borderRadius: BorderRadius.circular(14.r),
+            //   border: Border.all(
+            //     color: Colors.white.withValues(alpha: 0.2),
+            //     width: 1,
+            //   ),
+            // ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'คิวที่',
+                  'นัดหมายคิวที่',
                   style: TextStyle(
                     fontFamily: 'Kanit',
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    height: 1,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Color(bookingItemCard1Color),
                   ),
                 ),
-                SizedBox(height: 16.h),
-                Text(
-                  queueNumber,
-                  style: TextStyle(
-                    fontFamily: 'Kanit',
-                    fontSize: 32.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    height: 1,
-                  ),
-                ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 8.h),
+                // Queue Number (large)
                 Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 7.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 28.w, vertical: 10.h),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.18),
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(14.r),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
-                    timeLabel,
-                    textAlign: TextAlign.center,
+                    queueNumber,
                     style: TextStyle(
                       fontFamily: 'Kanit',
-                      fontSize: 14.sp,
+                      fontSize: 52.sp,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      height: 1,
+                      color: Color(bookingItemCard1Color),
+                      height: 1.1,
+                      letterSpacing: 6,
                     ),
                   ),
                 ),

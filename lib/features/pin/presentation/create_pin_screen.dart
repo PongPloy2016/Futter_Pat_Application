@@ -27,35 +27,28 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     if (_pin.length < 6) {
       setState(() {
         _pin += number;
-        if (_pin.length == 6) {
+      });
+
+      if (_pin.length == 6) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        
+        if (mounted) {
+          await context.pushNamed(
+            AppRouter.confirmPin,
+            extra: ConfirmPinExtra(
+              empId: widget.empId,
+              pin: _pin,
+              otpDataModel: ResponseRequestOTPDataModel(),
+            ),
+          );
+
           if (mounted) {
-            context.goNamed(
-              AppRouter.confirmPin,
-              extra: ConfirmPinExtra(
-                empId: widget.empId,
-                pin: _pin,
-                otpDataModel: ResponseRequestOTPDataModel(),
-              ),
-            );
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => ConfirmPinScreen(
-            //       empId: widget.empId,
-            //       pin: _pin,
-            //       otpDataModel: widget.otpDataModel,
-            //     ),
-            //   ),
-            // ).then((value) {
-            //   if (value == true) {
-            //     setState(() {
-            //       _pin = '';
-            //     });
-            //   }
-            // });
+            setState(() {
+              _pin = '';
+            });
           }
         }
-      });
+      }
     }
   }
 

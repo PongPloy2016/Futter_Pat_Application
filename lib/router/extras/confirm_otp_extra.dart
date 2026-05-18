@@ -1,12 +1,12 @@
-import 'package:flutter_pat_application/features/auth/data/models/otp_model.dart';
+import 'package:flutter_pat_application/features/otp/domain/entities/otp_entity.dart';
 
 /// Extra data class สำหรับส่งพารามิเตอร์ไปยัง ConfirmOtpScreen ผ่าน GoRouter
 class ConfirmOtpExtra {
   final String empId;
-  final ResponseRequestOTPDataModel? otpDataModel;
+  final OtpEntity? otpData;
 
   const ConfirmOtpExtra({
     required this.empId,
-    this.otpDataModel,
+    this.otpData,
   });
 }

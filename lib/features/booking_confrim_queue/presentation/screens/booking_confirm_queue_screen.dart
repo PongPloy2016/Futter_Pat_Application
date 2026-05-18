@@ -1,183 +1,328 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pat_application/themes/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../shared/widgets/appbar/custom_title_customer_app_bar.dart';
-import '../../../../shared/widgets/button/button_customs.dart';
+import '../../../../shared/widgets/logo/logo_create_pin.dart';
+import '../../../appointment/data/models/appointment_reserve_request_model.dart';
 import '../providers/booking_confirm_queue_provider.dart';
 import '../widgets/booking_confirm_queue_badge.dart';
-import '../widgets/booking_confirm_queue_confirm_button.dart';
-import '../widgets/booking_confirm_queue_header.dart';
+import '../widgets/booking_confirm_queue_contact_footer.dart';
 import '../widgets/booking_confirm_queue_info_card.dart';
-import '../widgets/booking_confirm_queue_title.dart';
+import '../widgets/booking_confirm_queue_notes_section.dart';
 
 class BookingConfirmQueueScreen extends ConsumerWidget {
-  const BookingConfirmQueueScreen({super.key, required this.bookingId});
+  const BookingConfirmQueueScreen({super.key, required this.request});
 
-  final String bookingId;
+  final AppointmentReserveRequestModel request;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bookingState = ref.watch(bookingConfirmQueueProvider(bookingId));
+    final bookingState = ref.watch(bookingConfirmQueueProvider(request));
 
     return bookingState.when(
       data: (booking) => Scaffold(
         appBar: CustomtitleCustomerAppBar(
-          title: '',
+          title: 'การนัดหมาย',
           onSuccess: () {
-            print("Test nav  communication ");
             context.pushNamed('communication');
           },
         ),
-        backgroundColor: const Color(0xFFF8F9FB),
+        backgroundColor: const Color(0xFFF5F7FA),
         body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(28.w, 18.h, 28.w, 112.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Center(child: const BookingConfirmQueueHeader()),
-                      SizedBox(height: 28.h),
-                      const BookingConfirmQueueTitle(),
-                      SizedBox(height: 26.h),
-                      Center(
-                        child: BookingConfirmQueueBadge(
-                          queueNumber: booking.queueNumber,
-                          timeLabel: booking.timeLabel,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              child: Column(
+                children: [
+                  // ── Main White Card ──
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              const Color(0xFF000000).withValues(alpha: 0.06),
+                          blurRadius: 20,
+                          offset: const Offset(0, 6),
                         ),
+                      ],
+                    ),
+                    child: Container(
+                      margin: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Colors.white, // Lighter blue (approx #E8F6FF)
+                              Colors.white, // Slightly darker (approx #E0F0FF)
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: const [0.0, 1.0],
+                          ),
+                          borderRadius: BorderRadius.circular(20.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF000000)
+                                  .withValues(alpha: 0.06),
+                              blurRadius: 20,
+                              offset: const Offset(0, 6),
+                            ),
+                          ]),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 24.h),
+                          LogoCreatePinWidget(),
+
+                          // ── 1. Queue Badge (PAT Logo + Queue Number) ──
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              alignment: Alignment.center,
+                              color: Color(primaryBlueLight),
+                              width: double.infinity,
+                              height: 200.h,
+                              child: BookingConfirmQueueBadge(
+                                queueNumber: booking.queueNumber,
+                                timeLabel: booking.timeLabel,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 24.h),
+
+                          // ── 2. Section Title ──
+                          _buildSectionTitle('รายละเอียดการนัดหมาย'),
+                          SizedBox(height: 8.h),
+
+                          // ── 3. Info Card ──
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child:
+                                BookingConfirmQueueInfoCard(booking: booking),
+                          ),
+                          SizedBox(height: 8.h),
+                        ],
                       ),
-                      SizedBox(height: 36.h),
-                      BookingConfirmQueueInfoCard(booking: booking),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: PrimarySubmitsButton(
-                    text: "ยืนยันการนัดหมาย",
-                    width: 200.w,
-                    height: 50.h,
-                    onPressed: () {
-                      print("Test nav  communication ");
-                      _showConfirmDialog(context);
-                    },
+                    ),
                   ),
 
-                  // BookingConfirmQueueConfirmButton(
-                  //   onPressed: () => _showConfirmDialog(context),
-                  // ),
-                ),
+                  SizedBox(height: 20.h),
+
+                  // ── 4. Notes Section ──
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: const BookingConfirmQueueNotesSection(),
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // ── 5. Cancel Button (Red) ──
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50.h,
+                      child: ElevatedButton(
+                        onPressed: () => _showCancelDialog(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE53935),
+                          foregroundColor: Colors.white,
+                          elevation: 2,
+                          shadowColor:
+                              const Color(0xFFE53935).withValues(alpha: 0.35),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: Text(
+                          'ยกเลิกการนัดหมาย',
+                          style: TextStyle(
+                            fontFamily: 'Kanit',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+
+                  // ── 6. Edit Button (Outlined Blue) ──
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50.h,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: Color(0xFF009ADB),
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: Text(
+                          'แก้ไขนัดหมาย',
+                          style: TextStyle(
+                            fontFamily: 'Kanit',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF009ADB),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  // ── 7. Contact Footer ──
+                  const BookingConfirmQueueContactFooter(),
+                  SizedBox(height: 16.h),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, stack) =>
-          Scaffold(body: Center(child: Text('เกิดข้อผิดพลาด: $error'))),
+      loading: () => const Scaffold(
+        backgroundColor: Color(0xFFF5F7FA),
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        backgroundColor: const Color(0xFFF5F7FA),
+        body: Center(child: Text('เกิดข้อผิดพลาด: $error')),
+      ),
     );
   }
 
-  void _showConfirmDialog(BuildContext context) {
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(
+          title,
+          style: TextStyle(
+            fontFamily: 'Kanit',
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF009ADB),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCancelDialog(BuildContext context) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(20.r),
         ),
         backgroundColor: Colors.white,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 28.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Success Icon
+              // Warning Icon
               Container(
-                width: 80.w,
-                height: 80.w,
+                width: 64.w,
+                height: 64.w,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE5F7ED),
-                  borderRadius: BorderRadius.circular(16.r),
+                  color: const Color(0xFFFFF3E0),
+                  shape: BoxShape.circle,
                 ),
-                child: Center(
-                  child: Container(
-                    width: 56.w,
-                    height: 56.w,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF42B83F),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.check, color: Colors.white, size: 40.w),
-                  ),
+                child: Icon(
+                  Icons.warning_amber_rounded,
+                  color: const Color(0xFFFF9800),
+                  size: 36.sp,
                 ),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 20.h),
               Text(
-                'นัดหมาย เสร็จสิ้น',
+                'ยกเลิกการนัดหมาย?',
                 style: TextStyle(
                   fontFamily: 'Kanit',
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF222222),
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF333333),
                 ),
               ),
-              SizedBox(height: 16.h),
-              RichText(
+              SizedBox(height: 8.h),
+              Text(
+                'คุณต้องการยกเลิกการนัดหมายนี้ใช่หรือไม่?',
                 textAlign: TextAlign.center,
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '*หมายเหตุ : ',
-                      style: TextStyle(
-                        fontFamily: 'Kanit',
-                        fontSize: 12.sp,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'ผู้เช่าต้องนำเอกสารฉบับจริงมาในวันต่อสัญญา',
-                      style: TextStyle(
-                        fontFamily: 'Kanit',
-                        fontSize: 12.sp,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                style: TextStyle(
+                  fontFamily: 'Kanit',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF666666),
                 ),
               ),
               SizedBox(height: 24.h),
+
+              // Confirm Cancel
               SizedBox(
-                width: 120.w,
-                height: 40.h,
+                width: double.infinity,
+                height: 44.h,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    // สามารถเพิ่ม context.goNamed(...) เพื่อกลับไปหน้าแรกได้ถ้าต้องการ
+                    // TODO: Implement cancel booking API call
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF004AAD),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
+                    backgroundColor: const Color(0xFFE53935),
                     elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
                   ),
                   child: Text(
-                    'เสร็จ',
+                    'ยืนยันยกเลิก',
                     style: TextStyle(
                       fontFamily: 'Kanit',
-                      fontSize: 16.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.h),
+
+              // Go Back
+              SizedBox(
+                width: double.infinity,
+                height: 44.h,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFFE0E0E0)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                  child: Text(
+                    'กลับ',
+                    style: TextStyle(
+                      fontFamily: 'Kanit',
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF666666),
                     ),
                   ),
                 ),

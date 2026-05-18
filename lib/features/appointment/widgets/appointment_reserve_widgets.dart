@@ -293,9 +293,8 @@ class AppointmentTimeSlotButton extends StatelessWidget {
                 : Colors.white,
             borderRadius: BorderRadius.circular(5.r),
             border: Border.all(
-              color: isSelected
-                  ? appointmentPrimaryBlue
-                  : const Color(0xFFD5D5D5),
+              color:
+                  isSelected ? appointmentPrimaryBlue : const Color(0xFFD5D5D5),
             ),
           ),
           child: Text(
@@ -304,9 +303,8 @@ class AppointmentTimeSlotButton extends StatelessWidget {
               fontFamily: 'Kanit',
               fontSize: 12.sp,
               fontWeight: FontWeight.w700,
-              color: isSelected
-                  ? appointmentPrimaryBlue
-                  : const Color(0xFF8F9AAB),
+              color:
+                  isSelected ? appointmentPrimaryBlue : const Color(0xFF8F9AAB),
             ),
           ),
         ),
@@ -430,11 +428,11 @@ class AppointmentReserveSubmitButton extends StatelessWidget {
       duration: const Duration(milliseconds: 180),
       opacity: enabled ? 1 : 0.55,
       child: SizedBox(
-        width: 212.w,
-        height: 38.h,
+        width: double.infinity,
+        height: 50.h,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(7.r),
+            borderRadius: BorderRadius.circular(10.r),
             gradient: const LinearGradient(
               colors: [Color(0xFF009ADB), Color(0xFF1FB4F2)],
               begin: Alignment.centerLeft,
@@ -456,14 +454,14 @@ class AppointmentReserveSubmitButton extends StatelessWidget {
               shadowColor: Colors.transparent,
               padding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(7.r),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
             child: Text(
-              'จองคิวนัดหมาย',
+              'บันทึกการนัดหมาย',
               style: TextStyle(
                 fontFamily: 'Kanit',
-                fontSize: 14.sp,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
               ),
@@ -474,3 +472,7 @@ class AppointmentReserveSubmitButton extends StatelessWidget {
     );
   }
 }
+
+
+
+

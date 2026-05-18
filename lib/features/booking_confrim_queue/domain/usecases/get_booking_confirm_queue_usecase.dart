@@ -1,3 +1,4 @@
+import '../../../appointment/data/models/appointment_reserve_request_model.dart';
 import '../entities/booking_confirm_queue_entity.dart';
 import '../repositories/booking_confirm_queue_repository.dart';
 
@@ -6,7 +7,7 @@ class GetBookingConfirmQueueUseCase {
 
   GetBookingConfirmQueueUseCase(this.repository);
 
-  Future<BookingConfirmQueueEntity> execute(String bookingId) {
-    return repository.getBookingConfirmQueue(bookingId);
+  Future<BookingConfirmQueueEntity> execute(AppointmentReserveRequestModel request) {
+    return repository.getBookingConfirmQueue(request);
   }
 }

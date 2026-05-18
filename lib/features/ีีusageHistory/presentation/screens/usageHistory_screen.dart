@@ -9,7 +9,8 @@ import '../../domain/entities/usageHistory_entity.dart';
 import '../providers/usageHistory_provider.dart';
 
 class UsageHistoryScreen extends ConsumerStatefulWidget {
-  const UsageHistoryScreen({super.key});
+  final int initialIndex;
+  const UsageHistoryScreen({super.key, this.initialIndex = 0});
 
   @override
   ConsumerState<UsageHistoryScreen> createState() => _UsageHistoryScreenState();
@@ -22,6 +23,7 @@ class _UsageHistoryScreenState extends ConsumerState<UsageHistoryScreen> {
 
     return DefaultTabController(
       length: 3,
+      initialIndex: widget.initialIndex,
       child: Scaffold(
         backgroundColor: const Color(0xFFF8F9FB),
         appBar: CustomtitleCustomerAppBar(

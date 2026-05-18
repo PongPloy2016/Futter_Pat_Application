@@ -32,15 +32,14 @@ class CustomtitleCustomerAppBar extends StatelessWidget
         title,
         textAlign: TextAlign.center,
         textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
-          fontWeight: fontBold,
-          fontSize: fontSize2_Title.sp,
-          color: Color(accidentTextColor),
-        ),
+              fontWeight: fontBold,
+              fontSize: fontSize2_Title.sp,
+              color: accent,
+            ),
       ),
       centerTitle: true,
       automaticallyImplyLeading: false,
-      actions:
-          actions ??
+      actions: actions ??
           (showActions
               ? [
                   Padding(

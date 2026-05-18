@@ -1,37 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_pat_application/features/pin/presentation/create_pin_screen.dart';
-import 'package:flutter_pat_application/shared/widgets/otp/otp_countdown.dart';
-import 'package:flutter_pat_application/shared/widgets/otp/otp_form.dart';
-import 'package:flutter_pat_application/shared/widgets/button/buttons.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../router/app_router.dart';
 import '../../../../router/extras/create_pin_extra.dart';
 import '../../../../shared/widgets/custom_text_default.dart';
-import '../../../auth/data/models/otp_model.dart';
+import '../../../../shared/widgets/otp/otp_countdown.dart';
+import '../../../../shared/widgets/otp/otp_form.dart';
+import '../../../../shared/widgets/button/buttons.dart';
+import '../../domain/entities/otp_entity.dart';
+import '../providers/otp_provider.dart';
 
-class ConfirmOtpScreen extends StatefulWidget {
+class ConfirmOtpScreen extends ConsumerStatefulWidget {
   const ConfirmOtpScreen({
     super.key,
     required this.empId,
-    required this.otpDataModel,
+    required this.otpData,
   });
 
   final String empId;
-  final ResponseRequestOTPDataModel? otpDataModel; // Updated type
+  final OtpEntity? otpData;
 
   @override
-  State<ConfirmOtpScreen> createState() => _ConfirmOtpScreenState();
+  ConsumerState<ConfirmOtpScreen> createState() => _ConfirmOtpScreenState();
 }
 
-class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
-  static const _storage = /*FlutterSecureStorage()*/
-      null; // REPLACE WITH INSTANCE
-  final GlobalKey<OtpFormState> _otpFormStateKey = GlobalKey(); // UPDATE TYPE
-  final GlobalKey<OtpCountdownState> _countDownStateKey =
-      GlobalKey(); // UPDATE TYPE
+class _ConfirmOtpScreenState extends ConsumerState<ConfirmOtpScreen> {
+  final GlobalKey<OtpFormState> _otpFormStateKey = GlobalKey();
+  final GlobalKey<OtpCountdownState> _countDownStateKey = GlobalKey();
 
   dynamic /*OTPTextEditController?*/
   _otpController; // Optional, only used on Android
@@ -41,13 +39,12 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
   bool _isResend = false;
   bool _isOutOfTime = false;
   int _isWrongOtpCount = 0;
-  ResponseRequestOTPDataModel? _resendOtpDataModel;
+  OtpEntity? _resendOtpData;
 
   @override
   void initState() {
     super.initState();
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      // Use OTP autofill only on Android
       _initializeOtpAutoFill();
     }
   }
@@ -63,7 +60,7 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
       onCodeReceive: (code) {
         print('🔴🔴🔴Your Application receive code - $code🔴🔴🔴');
         setState(() {
-          _otpFormStateKey.currentState?.setOtp(code); // Fill OTP into the form
+          _otpFormStateKey.currentState?.setOtp(code);
         });
       },
     )..startListenUserConsent(
@@ -78,7 +75,7 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
 
   @override
   void dispose() {
-    _otpController?.stopListen(); // Stop listening when the screen is disposed
+    _otpController?.stopListen();
     super.dispose();
   }
 
@@ -97,42 +94,46 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
     });
 
     try {
-      // final response = await RegisterService().verifyOtp(
-      //   empId: widget.empId,
-      //   otpValue: _otp,
-      //   codeReference:
-      //       _resendOtpDataModel?.codeReference ??
-      //       widget.otpDataModel?.codeReference ??
-      //       '', // Provide default value
-      //   token:
-      //       _resendOtpDataModel?.token ??
-      //       widget.otpDataModel?.token ??
-      //       '', // Provide default value
-      // );
+      final otpNotifier = ref.read(otpProvider.notifier);
+      final currentOtpData = _resendOtpData ?? widget.otpData;
+
+      final isVerified = await otpNotifier.verifyOtp(
+        empId: widget.empId,
+        otpValue: _otp,
+        codeReference: currentOtpData?.codeReference ?? '',
+        token: currentOtpData?.token ?? '',
+      );
 
       setState(() {
         _isSubmit = false;
       });
 
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => CreatePinScreen(
-      //       empId: widget.empId,
-      //       // Assert non-null after null check
-      //     ),
-      //   ),
-      // );
-      context.goNamed(
-        AppRouter.createPin,
-        extra: CreatePinExtra(empId: widget.empId),
-      );
+      if (isVerified) {
+        if (mounted) {
+          context.goNamed(
+            AppRouter.createPin,
+            extra: CreatePinExtra(empId: widget.empId),
+          );
+        }
+      } else {
+        setState(() {
+          _isWrongOtpCount++;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('รหัส OTP ไม่ถูกต้อง')),
+          );
+        }
+      }
     } catch (e) {
       setState(() {
         _isSubmit = false;
       });
-      // Handle error
-      print('Error verifying OTP: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
     }
   }
 
@@ -149,17 +150,17 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
     });
 
     try {
-      // final response = await RegisterService().requestOtp(empId: widget.empId);
+      final otpNotifier = ref.read(otpProvider.notifier);
+      final result = await otpNotifier.requestOtp(empId: widget.empId);
 
       setState(() {
         _isResend = false;
         _isWrongOtpCount = 0;
       });
 
-      /*
-      if (response.item3 != null) {
+      if (result != null) {
         setState(() {
-          _resendOtpDataModel = response.item3;
+          _resendOtpData = result;
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _countDownStateKey.currentState?.startCountdown();
@@ -167,23 +168,13 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
         });
 
         _countDownStateKey.currentState?.stopCountdown();
-      }
 
-      if (response.item1) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Resend success')),
+            const SnackBar(content: Text('ส่ง OTP ใหม่สำเร็จ')),
           );
         }
-        return;
       }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.item2)),
-        );
-      }
-      */
     } catch (e) {
       setState(() {
         _isResend = false;
@@ -204,11 +195,6 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if (widget.otpDataModel == null) {
-    //   return Scaffold(body: Center(child: Text('Error: OTP data is missing.')));
-    // }
-
-    // Proceed with the widget tree if otpDataModel is not null
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -258,8 +244,8 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
                     ),
                     CustomTextDefault(
                       text:
-                          _resendOtpDataModel?.codeReference ??
-                          widget.otpDataModel?.codeReference ??
+                          _resendOtpData?.codeReference ??
+                          widget.otpData?.codeReference ??
                           "-",
                       style: TextStyle(
                         fontSize: 14.sp,
@@ -274,8 +260,8 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
                   key: _countDownStateKey,
                   onOutOfTime: _handleOnOutOfTime,
                   expireDate:
-                      _resendOtpDataModel?.expireDate ??
-                      widget.otpDataModel?.expireDate ??
+                      _resendOtpData?.expireDate ??
+                      widget.otpData?.expireDate ??
                       DateTime.now()
                           .add(const Duration(minutes: 5))
                           .toIso8601String(),

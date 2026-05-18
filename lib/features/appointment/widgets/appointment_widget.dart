@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../domain/entities/Appointment_entity.dart';
+import '../../../../shared/widgets/button/button_customs.dart';
 
 const Color appointmentPrimaryBlue = Color(0xFF009ADB);
 const Color appointmentHintTextColor = Color(0xFFB5BED0);
@@ -120,23 +121,65 @@ class AppointmentSearchField extends StatelessWidget {
 }
 
 class AppointmentEmptyState extends StatelessWidget {
-  const AppointmentEmptyState({super.key});
+  const AppointmentEmptyState({super.key, this.onAddPressed});
+
+  final VoidCallback? onAddPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        child: Text(
-          'ไม่พบรายการสัญญาที่ตรงกับคำค้นหา',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Kanit',
-            fontSize: 16.sp,
-            color: appointmentLabelTextColor,
+    return Column(
+      children: [
+        SizedBox(height: 20.h),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 24.w),
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FB),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Icon(
+                  Icons.calendar_month_rounded,
+                  size: 80.sp,
+                  color: const Color(0xFFB5BED0),
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                'ยังไม่มีการนัดหมาย',
+                style: TextStyle(
+                  fontFamily: 'Kanit',
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFFB5BED0),
+                ),
+              ),
+              SizedBox(height: 32.h),
+              PrimarySubmitsButton(
+                width: double.infinity,
+                height: 54.h,
+                text: "เพิ่มการนัดหมาย",
+                onPressed: onAddPressed,
+              ),
+            ],
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -207,12 +250,10 @@ class AppointmentContractCard extends StatelessWidget {
   const AppointmentContractCard({
     super.key,
     required this.contract,
-    required this.isSelected,
     required this.onTap,
   });
 
   final AppointmentEntity contract;
-  final bool isSelected;
   final VoidCallback onTap;
 
   @override
@@ -228,12 +269,12 @@ class AppointmentContractCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(22.r),
-            border: Border.all(
-              color: isSelected
-                  ? appointmentPrimaryBlue
-                  : const Color(0xFFF2F4FF),
-              width: isSelected ? 1.5 : 1,
-            ),
+            // border: Border.all(
+            //   color: isSelected
+            //       ? appointmentPrimaryBlue
+            //       : const Color(0xFFF2F4FF),
+            //   width: isSelected ? 1.5 : 1,
+            // ),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFFB8BED9).withValues(alpha: 0.28),

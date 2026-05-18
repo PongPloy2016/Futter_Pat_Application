@@ -36,6 +36,7 @@ import 'package:flutter_pat_application/features/notifications/presentation/scre
 import 'package:flutter_pat_application/features/payment/presentation/screens/payment_screen.dart';
 import 'package:flutter_pat_application/features/payment_card/presentation/screens/payment_card_screen.dart';
 import 'package:flutter_pat_application/features/property/presentation/screens/propertyListRegistrationDetails/property_list_registration_details_screen.dart';
+import '../features/appointment/data/models/appointment_reserve_request_model.dart';
 import '../features/auth/data/models/otp_model.dart';
 import 'extras/payment_extra.dart';
 
@@ -54,7 +55,8 @@ class AppRouter {
   static const String notifications = 'notifications';
   static const String appointmentRenewal = 'appointmentRenewal';
   static const String appointmentReserve = 'appointmentReserve';
-  static const String appointmentConfirmBooking = 'appointmentConfirmBooking';
+  static const String appointmentConfirm = 'appointmentConfirm';
+  // static const String appointmentConfirmBooking = 'appointmentConfirmBooking';
   static const String attachFileDocuments = 'attachFileDocuments';
   static const String checkAppointments = 'checkAppointments';
   static const String invoice = 'invoice';
@@ -102,7 +104,7 @@ class AppRouter {
           final extra = state.extra as ConfirmOtpExtra?;
           return ConfirmOtpScreen(
             empId: extra?.empId ?? '',
-            otpDataModel: extra?.otpDataModel,
+            otpData: extra?.otpData,
           );
         },
       ),
@@ -221,7 +223,10 @@ class AppRouter {
       GoRoute(
         path: '/usageHistory',
         name: usageHistory,
-        builder: (context, state) => const UsageHistoryScreen(),
+        builder: (context, state) {
+          final initialIndex = state.extra as int? ?? 0;
+          return UsageHistoryScreen(initialIndex: initialIndex);
+        },
       ),
 
       // --- Appointment ---
@@ -240,10 +245,10 @@ class AppRouter {
           ),
           GoRoute(
             path: 'confirm',
-            name: appointmentConfirmBooking,
+            name: appointmentConfirm,
             builder: (context, state) {
-              final bookingId = state.extra as String? ?? '210000001';
-              return BookingConfirmQueueScreen(bookingId: bookingId);
+              final req = state.extra as AppointmentReserveRequestModel;
+              return BookingConfirmQueueScreen(request: req);
             },
           ),
           GoRoute(

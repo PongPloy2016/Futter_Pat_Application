@@ -49,6 +49,12 @@ import '../../features/ีีusageHistory/data/repositories/usageHistory_reposit
 import '../../features/ีีusageHistory/domain/repositories/usageHistory_repository.dart';
 import '../../features/ีีusageHistory/domain/usecases/get_usageHistory_usecase.dart';
 
+import '../../features/otp/data/datasources/otp_remote_datasource.dart';
+import '../../features/otp/data/repositories/otp_repository_impl.dart';
+import '../../features/otp/domain/repositories/otp_repository.dart';
+import '../../features/otp/domain/usecases/request_otp_usecase.dart';
+import '../../features/otp/domain/usecases/verify_otp_usecase.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initInjection() async {
@@ -63,6 +69,8 @@ Future<void> initInjection() async {
   sl.registerLazySingleton(() => RequestReceiptTaxInvoiceUseCase(sl()));
   sl.registerLazySingleton(() => paymentHistoryStateUseCase(sl()));
   sl.registerLazySingleton(() => UsageHistoryUseCase(sl()));
+  sl.registerLazySingleton(() => RequestOtpUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
 
   // Home Feature
   sl.registerLazySingleton<HomeRepository>(
@@ -95,6 +103,9 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<UsageHistoryRepository>(
     () => UsageHistoryRepositoryImpl(remoteDataSource: sl()),
   );
+  sl.registerLazySingleton<OtpRepository>(
+    () => OtpRepositoryImpl(remoteDataSource: sl()),
+  );
 
   // Data sources
   sl.registerLazySingleton<ContractRemoteDataSource>(
@@ -120,6 +131,9 @@ Future<void> initInjection() async {
   );
   sl.registerLazySingleton<UsageHistoryDataSource>(
     () => UsageHistoryDataSourceImpl(),
+  );
+  sl.registerLazySingleton<OtpRemoteDataSource>(
+    () => OtpRemoteDataSourceImpl(),
   );
 
   sl.registerLazySingleton<InvoiceRepository>(
